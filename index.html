@@ -100,32 +100,44 @@
         .forgot:hover {
             text-decoration: underline;
         }
+
+        .message {
+            margin-top: 12px;
+            font-size: 14px;
+            color: #c0392b;
+            min-height: 18px;
+        }
+
+        .message.success { color: #27ae60; }
     </style>
 </head>
 
 <body>
 
-    <div class="login-container">
+    <div class="login-container" role="region" aria-labelledby="login-heading">
 
         <!-- College Logo -->
         <img
             class="logo"
             src="apeclogo.jpeg"
-            alt="College Logo"
+            alt="Apecka College logo"
         >
 
-        <h2>College Login</h2>
-        <p class="subtitle">Welcome! Please login to continue</p>
+        <h2 id="login-heading">College Login</h2>
+        <p class="subtitle" id="login-subtitle">Welcome! Please login to continue</p>
 
-        <form onsubmit="login(event)">
+        <form id="login-form" novalidate aria-describedby="login-subtitle">
 
             <div class="input-box">
                 <label for="username">Username</label>
                 <input
                     type="text"
                     id="username"
+                    name="username"
                     placeholder="Enter your username"
+                    autocomplete="username"
                     required
+                    aria-required="true"
                 >
             </div>
 
@@ -134,14 +146,19 @@
                 <input
                     type="password"
                     id="password"
+                    name="password"
                     placeholder="Enter your password"
+                    autocomplete="current-password"
                     required
+                    aria-required="true"
                 >
             </div>
 
             <button type="submit" class="login-btn">
                 Login
             </button>
+
+            <div class="message" id="login-message" role="status" aria-live="polite"></div>
 
         </form>
 
@@ -150,19 +167,42 @@
     </div>
 
     <script>
-        function login(event) {
-            event.preventDefault();
+        // Attach event listener instead of inline onsubmit
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('login-form');
+            const messageEl = document.getElementById('login-message');
 
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                messageEl.textContent = '';
+                messageEl.classList.remove('success');
 
-            // Demo login
-            if (username === "admin" && password === "1234") {
-                alert("Login successful!");
-            } else {
-                alert("Invalid username or password!");
-            }
-        }
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value;
+
+                // Basic client-side validation
+                if (!username || !password) {
+                    messageEl.textContent = 'Please enter both username and password.';
+                    return;
+                }
+
+                // Demo login: replace with real authentication in production
+                if (username === 'admin' && password === '1234') {
+                    messageEl.textContent = 'Login successful! Redirecting...';
+                    messageEl.classList.add('success');
+
+                    // Simulate redirect after short delay
+                    setTimeout(function () {
+                        // If you have a dashboard page, change the location to it
+                        // location.href = '/dashboard.html';
+                        // For now, just clear the form
+                        form.reset();
+                    }, 800);
+                } else {
+                    messageEl.textContent = 'Invalid username or password!';
+                }
+            });
+        });
     </script>
 
 </body>
